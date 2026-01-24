@@ -160,19 +160,6 @@ java -cp ".;lib/mysql-connector-j-9.1.0.jar" TiendaProductosGUI
 - Manual stock update
 - Cursor execution to calculate totals
 
-## Technologies used
 
-| Technology | Usage |
-|------------|-----|
-| Java Swing | Graphical user interface |
-| JDBC | Database connectivity |
-| MySQL | Database management system |
-| SQL | Cursors, functions, procedures, and triggers |
 
-## Author
 
-Project developed as a Database Programming lab.
-
----
-
-Product Store Management System - Second Delivery
