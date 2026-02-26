@@ -1,0 +1,9 @@
+C:\Users\juliy\Product-Store-Management-System\backend\src\main\java\com\juliy\store\backend\BackendApplication.java
+C:\Users\juliy\Product-Store-Management-System\backend\src\main\java\com\juliy\store\backend\config\CorsConfig.java
+C:\Users\juliy\Product-Store-Management-System\backend\src\main\java\com\juliy\store\backend\product\controller\ProductController.java
+C:\Users\juliy\Product-Store-Management-System\backend\src\main\java\com\juliy\store\backend\product\domain\Product.java
+C:\Users\juliy\Product-Store-Management-System\backend\src\main\java\com\juliy\store\backend\product\dto\ProductResponse.java
+C:\Users\juliy\Product-Store-Management-System\backend\src\main\java\com\juliy\store\backend\product\repository\ProductRepository.java
+C:\Users\juliy\Product-Store-Management-System\backend\src\main\java\com\juliy\store\backend\product\service\ProductService.java
+C:\Users\juliy\Product-Store-Management-System\backend\src\main\java\com\juliy\store\backend\shared\exception\ApiError.java
+C:\Users\juliy\Product-Store-Management-System\backend\src\main\java\com\juliy\store\backend\shared\exception\GlobalExceptionHandler.java
