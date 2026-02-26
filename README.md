@@ -10,7 +10,7 @@
 
 This project uses [Semantic Versioning](https://semver.org/) with tags in the format `vX.Y.Z`.
 
-- Current version: `0.2.0`
+- Current version: `0.3.0`
 - Changelog: `CHANGELOG.md`
 
 ### How to publish a new version
@@ -20,10 +20,10 @@ This project uses [Semantic Versioning](https://semver.org/) with tags in the fo
 
 # 2) Commit changes
 git add VERSION CHANGELOG.md README.md
-git commit -m "chore(release): v0.2.0"
+git commit -m "chore(release): v0.3.0"
 
 # 3) Create and push tag
-git tag v0.2.0
+git tag v0.3.0
 git push origin main --tags
 ```
 
@@ -190,6 +190,10 @@ Products endpoints:
 - `GET /api/products`
 - `GET /api/products/{id}`
 
+Sales endpoints:
+- `GET /api/sales`
+- `POST /api/sales`
+
 ## Frontend (Angular)
 
 ```bash
@@ -198,6 +202,11 @@ npm --prefix frontend start
 ```
 
 Frontend URL: `http://localhost:4200`
+
+Current frontend features:
+- Product listing with live stock.
+- Sale registration form.
+- Sales history with subtotal calculation.
 
 ## UI functionality
 

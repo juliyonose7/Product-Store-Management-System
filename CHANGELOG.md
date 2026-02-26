@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 The format is based on Keep a Changelog and follows Semantic Versioning.
 
+## [0.3.0] - 2026-02-26
+
+### Added
+- Sales backend module with endpoints `GET /api/sales` and `POST /api/sales`.
+- Backend sales validations for product existence and stock availability.
+- Angular sales dashboard with sale registration form and sales history table.
+- Frontend services and models for sales integration.
+
 ## [0.2.0] - 2026-02-26
 
 ### Added

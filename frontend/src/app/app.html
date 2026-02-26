@@ -7,7 +7,33 @@
   <section *ngIf="loading" class="state">Cargando productos...</section>
   <section *ngIf="error" class="state error">{{ error }}</section>
 
-  <section *ngIf="!loading && !error">
+  <section *ngIf="!loading && !error" class="card">
+    <h2>Registrar venta</h2>
+    <form (ngSubmit)="registerSale()" class="sale-form">
+      <label>
+        Producto
+        <select [(ngModel)]="saleForm.productId" name="productId" required>
+          <option [ngValue]="0" disabled>Selecciona un producto</option>
+          <option *ngFor="let product of products" [ngValue]="product.id">
+            {{ product.name }} (Stock: {{ product.stock }})
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Cantidad
+        <input type="number" min="1" [(ngModel)]="saleForm.quantity" name="quantity" required />
+      </label>
+
+      <button type="submit">Guardar venta</button>
+    </form>
+
+    <p *ngIf="saleSuccess" class="message success">{{ saleSuccess }}</p>
+    <p *ngIf="saleError" class="message error-text">{{ saleError }}</p>
+  </section>
+
+  <section *ngIf="!loading && !error" class="card">
+    <h2>Productos</h2>
     <table>
       <thead>
         <tr>
@@ -23,6 +49,32 @@
           <td>{{ product.name }}</td>
           <td>{{ product.price | currency:'USD' }}</td>
           <td>{{ product.stock }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section *ngIf="!loading && !error" class="card">
+    <h2>Historial de ventas</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID Venta</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Fecha</th>
+          <th>Precio unitario</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let sale of sales">
+          <td>{{ sale.id }}</td>
+          <td>{{ sale.productName }}</td>
+          <td>{{ sale.quantity }}</td>
+          <td>{{ sale.saleDate }}</td>
+          <td>{{ sale.unitPrice | currency:'USD' }}</td>
+          <td>{{ sale.subtotal | currency:'USD' }}</td>
         </tr>
       </tbody>
     </table>
