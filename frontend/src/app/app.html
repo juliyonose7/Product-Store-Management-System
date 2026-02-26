@@ -2,12 +2,33 @@
   <header>
     <h1>Product Store Management</h1>
     <p>Frontend Angular consumiendo API Spring Boot</p>
+    <p *ngIf="isAuthenticated" class="session-info">
+      Sesión: {{ username }} ({{ role }})
+      <button type="button" (click)="logout()">Cerrar sesión</button>
+    </p>
   </header>
 
-  <section *ngIf="loading" class="state">Cargando productos...</section>
-  <section *ngIf="error" class="state error">{{ error }}</section>
+  <section *ngIf="!isAuthenticated" class="card auth-card">
+    <h2>Iniciar sesión</h2>
+    <form (ngSubmit)="login()" class="auth-form">
+      <label>
+        Usuario
+        <input type="text" [(ngModel)]="credentials.username" name="username" required />
+      </label>
+      <label>
+        Contraseña
+        <input type="password" [(ngModel)]="credentials.password" name="password" required />
+      </label>
+      <button type="submit">Entrar</button>
+    </form>
+    <p class="hint">Usuarios de prueba: admin/admin123 y cajero/cajero123</p>
+    <p *ngIf="loginError" class="message error-text">{{ loginError }}</p>
+  </section>
 
-  <section *ngIf="!loading && !error" class="card">
+  <section *ngIf="isAuthenticated && loading" class="state">Cargando productos...</section>
+  <section *ngIf="isAuthenticated && error" class="state error">{{ error }}</section>
+
+  <section *ngIf="isAuthenticated && !loading && !error" class="card">
     <h2>Registrar venta</h2>
     <form (ngSubmit)="registerSale()" class="sale-form">
       <label>
@@ -32,7 +53,7 @@
     <p *ngIf="saleError" class="message error-text">{{ saleError }}</p>
   </section>
 
-  <section *ngIf="!loading && !error" class="card">
+  <section *ngIf="isAuthenticated && !loading && !error" class="card">
     <h2>Productos</h2>
     <table>
       <thead>
@@ -54,7 +75,7 @@
     </table>
   </section>
 
-  <section *ngIf="!loading && !error" class="card">
+  <section *ngIf="isAuthenticated && !loading && !error" class="card">
     <h2>Historial de ventas</h2>
     <table>
       <thead>

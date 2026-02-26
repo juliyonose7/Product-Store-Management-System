@@ -15,6 +15,12 @@ header p {
 	color: #555;
 }
 
+.session-info {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
 .state {
 	padding: 1rem;
 	background: #f0f4ff;
@@ -42,6 +48,16 @@ table {
 
 .card h2 {
 	margin: 0;
+}
+
+.auth-card {
+	max-width: 480px;
+}
+
+.auth-form {
+	display: grid;
+	gap: 0.75rem;
+	margin-top: 0.75rem;
 }
 
 .sale-form {
@@ -76,6 +92,12 @@ button {
 
 .message {
 	margin: 0.75rem 0 0;
+}
+
+.hint {
+	margin: 0.6rem 0 0;
+	font-size: 0.85rem;
+	color: #555;
 }
 
 .success {

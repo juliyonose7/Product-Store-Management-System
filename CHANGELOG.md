@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file.
 
 The format is based on Keep a Changelog and follows Semantic Versioning.
 
+## [0.4.0] - 2026-02-26
+
+### Added
+- Spring Security + JWT authentication in backend.
+- Login endpoint `POST /api/auth/login` with roles `ADMIN` and `CAJERO`.
+- JWT filter and stateless API security rules.
+- Angular login/logout flow with token storage and auth interceptor.
+
+### Security
+- Protected products and sales endpoints behind role-based authentication.
+
 ## [0.3.0] - 2026-02-26
 
 ### Added

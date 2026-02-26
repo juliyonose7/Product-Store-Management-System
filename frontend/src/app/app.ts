@@ -5,6 +5,7 @@ import { Product } from './core/models/product.model';
 import { ProductService } from './core/services/product.service';
 import { Sale } from './core/models/sale.model';
 import { SaleService } from './core/services/sale.service';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,15 @@ export class App implements OnInit {
   error = '';
   saleError = '';
   saleSuccess = '';
+  loginError = '';
+  isAuthenticated = false;
+  username = '';
+  role = '';
+
+  credentials = {
+    username: '',
+    password: ''
+  };
 
   saleForm = {
     productId: 0,
@@ -26,12 +36,54 @@ export class App implements OnInit {
   };
 
   constructor(
+    private readonly authService: AuthService,
     private readonly productService: ProductService,
     private readonly saleService: SaleService
   ) {}
 
   ngOnInit(): void {
-    this.loadDashboardData();
+    this.isAuthenticated = this.authService.isAuthenticated();
+    this.username = this.authService.getUsername();
+    this.role = this.authService.getRole();
+
+    if (this.isAuthenticated) {
+      this.loadDashboardData();
+      return;
+    }
+
+    this.loading = false;
+  }
+
+  login(): void {
+    this.loginError = '';
+    this.loading = true;
+
+    this.authService.login(this.credentials).subscribe({
+      next: () => {
+        this.isAuthenticated = true;
+        this.username = this.authService.getUsername();
+        this.role = this.authService.getRole();
+        this.credentials.password = '';
+        this.loadDashboardData();
+      },
+      error: () => {
+        this.loading = false;
+        this.loginError = 'Credenciales inválidas';
+      }
+    });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.isAuthenticated = false;
+    this.username = '';
+    this.role = '';
+    this.products = [];
+    this.sales = [];
+    this.error = '';
+    this.saleError = '';
+    this.saleSuccess = '';
+    this.credentials.password = '';
   }
 
   registerSale(): void {
@@ -52,6 +104,11 @@ export class App implements OnInit {
         this.loadDashboardData();
       },
       error: (err) => {
+        if (err?.status === 401 || err?.status === 403) {
+          this.logout();
+          this.loginError = 'Tu sesión expiró. Inicia sesión nuevamente.';
+          return;
+        }
         this.saleSuccess = '';
         this.saleError = err?.error?.message || 'No se pudo registrar la venta.';
       }
@@ -66,7 +123,12 @@ export class App implements OnInit {
         this.products = items;
         this.loadSales();
       },
-      error: () => {
+      error: (err) => {
+        if (err?.status === 401 || err?.status === 403) {
+          this.logout();
+          this.loginError = 'Tu sesión expiró. Inicia sesión nuevamente.';
+          return;
+        }
         this.error = 'No se pudieron cargar los productos. Verifica backend y base de datos.';
         this.loading = false;
       }
@@ -80,7 +142,12 @@ export class App implements OnInit {
         this.error = '';
         this.loading = false;
       },
-      error: () => {
+      error: (err) => {
+        if (err?.status === 401 || err?.status === 403) {
+          this.logout();
+          this.loginError = 'Tu sesión expiró. Inicia sesión nuevamente.';
+          return;
+        }
         this.error = 'No se pudo cargar el historial de ventas.';
         this.loading = false;
       }
