@@ -4,6 +4,27 @@
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![Swing](https://img.shields.io/badge/Swing-GUI-blue?style=for-the-badge)
 
+## Versioning
+
+This project uses [Semantic Versioning](https://semver.org/) with tags in the format `vX.Y.Z`.
+
+- Current version: `0.1.0`
+- Changelog: `CHANGELOG.md`
+
+### How to publish a new version
+
+```bash
+# 1) Update VERSION and CHANGELOG.md
+
+# 2) Commit changes
+git add VERSION CHANGELOG.md README.md
+git commit -m "chore(release): v0.1.0"
+
+# 3) Create and push tag
+git tag v0.1.0
+git push origin main --tags
+```
+
 ## Description
 
 Store management system that integrates a Java Swing user interface with a MySQL database. The project implements cursors, functions, stored procedures, and triggers to manage products and sales.
