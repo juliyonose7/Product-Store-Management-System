@@ -1,0 +1,30 @@
+<main class="container">
+  <header>
+    <h1>Product Store Management</h1>
+    <p>Frontend Angular consumiendo API Spring Boot</p>
+  </header>
+
+  <section *ngIf="loading" class="state">Cargando productos...</section>
+  <section *ngIf="error" class="state error">{{ error }}</section>
+
+  <section *ngIf="!loading && !error">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.id }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.price | currency:'USD' }}</td>
+          <td>{{ product.stock }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>

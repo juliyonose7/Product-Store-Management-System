@@ -3,12 +3,14 @@
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 ![Swing](https://img.shields.io/badge/Swing-GUI-blue?style=for-the-badge)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
 
 ## Versioning
 
 This project uses [Semantic Versioning](https://semver.org/) with tags in the format `vX.Y.Z`.
 
-- Current version: `0.1.0`
+- Current version: `0.2.0`
 - Changelog: `CHANGELOG.md`
 
 ### How to publish a new version
@@ -18,12 +20,19 @@ This project uses [Semantic Versioning](https://semver.org/) with tags in the fo
 
 # 2) Commit changes
 git add VERSION CHANGELOG.md README.md
-git commit -m "chore(release): v0.1.0"
+git commit -m "chore(release): v0.2.0"
 
 # 3) Create and push tag
-git tag v0.1.0
+git tag v0.2.0
 git push origin main --tags
 ```
+
+## Current architecture (in migration)
+
+- `TiendaProductosGUI.java`: legacy Swing client.
+- `backend/`: Spring Boot REST API.
+- `frontend/`: Angular frontend.
+- Migration approach: move business logic from Swing + direct SQL into backend services.
 
 ## Description
 
@@ -113,19 +122,21 @@ The application includes four main tabs.
 ## Project structure
 
 ```
-2NDA ENTREGA
-├── TiendaProductosGUI.java     # Main application with UI
-├── laboratorio_sql.sql         # Database SQL script
-├── README.md                   # Project documentation
-└── lib/
-    └── mysql-connector-j-9.1.0.jar  # MySQL JDBC driver
+Product-Store-Management-System
+├── TiendaProductosGUI.java         # Legacy Swing client
+├── laboratorio_sql.sql             # SQL schema and procedures
+├── backend/                        # Spring Boot API
+├── frontend/                       # Angular UI
+├── VERSION
+├── CHANGELOG.md
+└── README.md
 ```
 
 ## Prerequisites
 
-- Java JDK 8 or later
+- Java JDK 17
 - MySQL Server 5.7 or later
-- MySQL Connector/J included in /lib
+- Node.js and npm (for Angular frontend)
 
 ## Installation and execution
 
@@ -155,6 +166,38 @@ javac -cp ".;lib/mysql-connector-j-9.1.0.jar" TiendaProductosGUI.java
 # Run
 java -cp ".;lib/mysql-connector-j-9.1.0.jar" TiendaProductosGUI
 ```
+
+## Backend (Spring Boot)
+
+### 1. Configure DB credentials
+
+Update `backend/src/main/resources/application.properties`:
+
+```properties
+spring.datasource.username=root
+spring.datasource.password=tu_contrasena
+```
+
+### 2. Run backend
+
+```bash
+backend/mvnw spring-boot:run
+```
+
+Backend URL: `http://localhost:8080`
+
+Products endpoints:
+- `GET /api/products`
+- `GET /api/products/{id}`
+
+## Frontend (Angular)
+
+```bash
+npm --prefix frontend install
+npm --prefix frontend start
+```
+
+Frontend URL: `http://localhost:4200`
 
 ## UI functionality
 

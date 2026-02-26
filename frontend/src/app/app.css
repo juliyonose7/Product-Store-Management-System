@@ -1,0 +1,43 @@
+.container {
+	max-width: 900px;
+	margin: 2rem auto;
+	padding: 0 1rem;
+	font-family: Arial, sans-serif;
+}
+
+h1 {
+	margin: 0;
+}
+
+header p {
+	color: #555;
+}
+
+.state {
+	padding: 1rem;
+	background: #f0f4ff;
+	border-radius: 8px;
+	margin-top: 1rem;
+}
+
+.error {
+	background: #ffecec;
+	color: #8b0000;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 1rem;
+}
+
+th,
+td {
+	border-bottom: 1px solid #ddd;
+	padding: 0.75rem;
+	text-align: left;
+}
+
+th {
+	background: #f7f7f7;
+}
