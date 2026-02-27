@@ -4,6 +4,7 @@ import com.juliy.store.backend.product.domain.Product;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "registro_ventas")
@@ -23,6 +24,15 @@ public class Sale {
 
     @Column(name = "fecha_venta", nullable = false)
     private LocalDate saleDate;
+
+    @Column(name = "creado_por", nullable = false, length = 50)
+    private String createdBy;
+
+    @Column(name = "creado_en", nullable = false, insertable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "actualizado_en", nullable = false, insertable = false, updatable = false)
+    private LocalDateTime updatedAt;
 
     public Integer getId() {
         return id;
@@ -54,5 +64,29 @@ public class Sale {
 
     public void setSaleDate(LocalDate saleDate) {
         this.saleDate = saleDate;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -24,6 +24,11 @@ public class SaleController {
         return saleService.findAll();
     }
 
+    @GetMapping("/activity")
+    public List<SaleResponse> getSalesActivity() {
+        return saleService.findRecentActivity();
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SaleResponse createSale(@Valid @RequestBody CreateSaleRequest request) {

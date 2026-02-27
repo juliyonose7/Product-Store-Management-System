@@ -33,6 +33,9 @@ CREATE TABLE registro_ventas (
     id_producto INT NOT NULL,
     cantidad INT NOT NULL,
     fecha_venta DATE NOT NULL,
+    creado_por VARCHAR(50) NOT NULL DEFAULT 'seed',
+    creado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    actualizado_en TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
 );
 
@@ -246,7 +249,8 @@ SELECT * FROM productos;
 -- List all recorded sales
 SELECT '=== REGISTRO DE VENTAS ===' AS Info;
 SELECT rv.id_venta, p.nombre, rv.cantidad, p.precio, 
-       (rv.cantidad * p.precio) AS subtotal, rv.fecha_venta
+    (rv.cantidad * p.precio) AS subtotal, rv.fecha_venta,
+    rv.creado_por, rv.creado_en
 FROM registro_ventas rv
 INNER JOIN productos p ON rv.id_producto = p.id_producto;
 

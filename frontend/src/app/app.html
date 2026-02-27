@@ -101,4 +101,28 @@
       </tbody>
     </table>
   </section>
+
+  <section *ngIf="isAuthenticated && !loading && !error" class="card">
+    <h2>Actividad reciente</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID Venta</th>
+          <th>Usuario</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Creado en</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let activity of salesActivity">
+          <td>{{ activity.id }}</td>
+          <td>{{ activity.createdBy }}</td>
+          <td>{{ activity.productName }}</td>
+          <td>{{ activity.quantity }}</td>
+          <td>{{ activity.createdAt | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
 </main>

@@ -16,6 +16,7 @@ import { AuthService } from './core/services/auth.service';
 export class App implements OnInit, OnDestroy {
   products: Product[] = [];
   sales: Sale[] = [];
+  salesActivity: Sale[] = [];
   loading = true;
   error = '';
   saleError = '';
@@ -160,6 +161,24 @@ export class App implements OnInit, OnDestroy {
     this.saleService.getSales().subscribe({
       next: (items) => {
         this.sales = items;
+        this.loadSalesActivity();
+      },
+      error: (err) => {
+        if (err?.status === 401 || err?.status === 403) {
+          this.logout();
+          this.loginError = 'Tu sesión expiró. Inicia sesión nuevamente.';
+          return;
+        }
+        this.error = 'No se pudo cargar el historial de ventas.';
+        this.loading = false;
+      }
+    });
+  }
+
+  private loadSalesActivity(): void {
+    this.saleService.getSalesActivity().subscribe({
+      next: (items) => {
+        this.salesActivity = items;
         this.error = '';
         this.loading = false;
       },
@@ -169,7 +188,7 @@ export class App implements OnInit, OnDestroy {
           this.loginError = 'Tu sesión expiró. Inicia sesión nuevamente.';
           return;
         }
-        this.error = 'No se pudo cargar el historial de ventas.';
+        this.error = 'No se pudo cargar la actividad reciente de ventas.';
         this.loading = false;
       }
     });

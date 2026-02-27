@@ -6,4 +6,7 @@ export interface Sale {
   saleDate: string;
   unitPrice: number;
   subtotal: number;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
 }

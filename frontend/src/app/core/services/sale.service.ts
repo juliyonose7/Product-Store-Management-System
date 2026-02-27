@@ -17,6 +17,10 @@ export class SaleService {
     return this.http.get<Sale[]>(this.endpoint);
   }
 
+  getSalesActivity(): Observable<Sale[]> {
+    return this.http.get<Sale[]>(`${this.endpoint}/activity`);
+  }
+
   createSale(payload: CreateSaleRequest): Observable<Sale> {
     return this.http.post<Sale>(this.endpoint, payload);
   }

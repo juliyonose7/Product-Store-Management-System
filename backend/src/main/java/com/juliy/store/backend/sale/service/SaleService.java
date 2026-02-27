@@ -8,6 +8,8 @@ import com.juliy.store.backend.sale.dto.SaleResponse;
 import com.juliy.store.backend.sale.repository.SaleRepository;
 import com.juliy.store.backend.sale.repository.SaleReportProjection;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,14 @@ public class SaleService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<SaleResponse> findRecentActivity() {
+        return saleRepository.findRecentActivity()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     @Transactional
     public SaleResponse createSale(CreateSaleRequest request) {
         Product product = productRepository.findById(request.productId())
@@ -47,6 +57,7 @@ public class SaleService {
         sale.setProduct(product);
         sale.setQuantity(request.quantity());
         sale.setSaleDate(request.saleDate() == null ? LocalDate.now() : request.saleDate());
+        sale.setCreatedBy(getCurrentUsername());
 
         Sale savedSale = saleRepository.save(sale);
 
@@ -58,7 +69,10 @@ public class SaleService {
                 savedSale.getQuantity(),
                 savedSale.getSaleDate(),
                 product.getPrice(),
-                subtotal
+                subtotal,
+                savedSale.getCreatedBy(),
+                savedSale.getCreatedAt(),
+                savedSale.getUpdatedAt()
         );
     }
 
@@ -70,7 +84,18 @@ public class SaleService {
                 projection.getQuantity(),
                 projection.getSaleDate(),
                 projection.getUnitPrice(),
-                projection.getSubtotal()
+                projection.getSubtotal(),
+                projection.getCreatedBy(),
+                projection.getCreatedAt(),
+                projection.getUpdatedAt()
         );
+    }
+
+    private String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            return "system";
+        }
+        return authentication.getName();
     }
 }

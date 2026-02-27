@@ -16,10 +16,32 @@ public interface SaleRepository extends JpaRepository<Sale, Integer> {
                 rv.cantidad AS quantity,
                 rv.fecha_venta AS saleDate,
                 p.precio AS unitPrice,
-                (rv.cantidad * p.precio) AS subtotal
+                (rv.cantidad * p.precio) AS subtotal,
+                rv.creado_por AS createdBy,
+                rv.creado_en AS createdAt,
+                rv.actualizado_en AS updatedAt
             FROM registro_ventas rv
             INNER JOIN productos p ON rv.id_producto = p.id_producto
             ORDER BY rv.id_venta DESC
             """, nativeQuery = true)
     List<SaleReportProjection> findSalesReport();
+
+    @Query(value = """
+            SELECT
+                rv.id_venta AS id,
+                p.id_producto AS productId,
+                p.nombre AS productName,
+                rv.cantidad AS quantity,
+                rv.fecha_venta AS saleDate,
+                p.precio AS unitPrice,
+                (rv.cantidad * p.precio) AS subtotal,
+                rv.creado_por AS createdBy,
+                rv.creado_en AS createdAt,
+                rv.actualizado_en AS updatedAt
+            FROM registro_ventas rv
+            INNER JOIN productos p ON rv.id_producto = p.id_producto
+            ORDER BY rv.creado_en DESC
+            LIMIT 20
+            """, nativeQuery = true)
+    List<SaleReportProjection> findRecentActivity();
 }

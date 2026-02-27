@@ -10,7 +10,7 @@
 
 This project uses [Semantic Versioning](https://semver.org/) with tags in the format `vX.Y.Z`.
 
-- Current version: `0.6.0`
+- Current version: `0.7.0`
 - Changelog: `CHANGELOG.md`
 
 ### How to publish a new version
@@ -20,10 +20,10 @@ This project uses [Semantic Versioning](https://semver.org/) with tags in the fo
 
 # 2) Commit changes
 git add VERSION CHANGELOG.md README.md
-git commit -m "chore(release): v0.6.0"
+git commit -m "chore(release): v0.7.0"
 
 # 3) Create and push tag
-git tag v0.6.0
+git tag v0.7.0
 git push origin main --tags
 ```
 
@@ -197,6 +197,7 @@ Products endpoints:
 Sales endpoints:
 - `GET /api/sales`
 - `POST /api/sales`
+- `GET /api/sales/activity`
 
 Demo users:
 - `admin` / `admin123` (role `ADMIN`)
@@ -208,6 +209,10 @@ Authorization rules (finer-grained):
 - `GET /api/products/**`: `ADMIN`, `CAJERO`
 - `POST|PUT|DELETE /api/products/**`: `ADMIN`
 - `GET|POST /api/sales/**`: `ADMIN`, `CAJERO`
+
+Sales audit:
+- Sales store `creado_por`, `creado_en`, and `actualizado_en`.
+- `creado_por` is the authenticated username from JWT.
 
 ## Frontend (Angular)
 
@@ -225,6 +230,7 @@ Current frontend features:
 - Product listing with live stock.
 - Sale registration form.
 - Sales history with subtotal calculation.
+- Recent activity panel with user + timestamp.
 
 ## UI functionality
 

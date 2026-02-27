@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file.
 
 The format is based on Keep a Changelog and follows Semantic Versioning.
 
+## [0.7.0] - 2026-02-27
+
+### Added
+- Sales audit fields: creator (`creado_por`), created timestamp (`creado_en`), updated timestamp (`actualizado_en`).
+- New activity endpoint `GET /api/sales/activity` for recent sales actions.
+- Frontend "Actividad reciente" section showing user and creation timestamp.
+
+### Security
+- Sales now persist the authenticated username that created the transaction.
+
 ## [0.6.0] - 2026-02-27
 
 ### Added
