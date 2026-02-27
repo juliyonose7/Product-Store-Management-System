@@ -4,6 +4,13 @@ All notable changes to this project are documented in this file.
 
 The format is based on Keep a Changelog and follows Semantic Versioning.
 
+## [0.9.0] - 2026-02-27
+
+### Added
+- CSV export endpoint for sales: `GET /api/sales/export`.
+- CSV export endpoint for metrics: `GET /api/metrics/export`.
+- Angular dashboard buttons to download sales and metrics reports in CSV format.
+
 ## [0.8.0] - 2026-02-27
 
 ### Added

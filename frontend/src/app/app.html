@@ -30,7 +30,10 @@
   <section *ngIf="isAuthenticated && error" class="state error">{{ error }}</section>
 
   <section *ngIf="isAuthenticated && !loading && !error" class="card">
-    <h2>Métricas del mes</h2>
+    <div class="section-header">
+      <h2>Métricas del mes</h2>
+      <button type="button" (click)="downloadMetricsCsv()">Exportar métricas CSV</button>
+    </div>
     <div class="metrics-cards" *ngIf="metrics as m">
       <div class="metric-card">
         <span>Total ingresos</span>
@@ -139,7 +142,10 @@
   </section>
 
   <section *ngIf="isAuthenticated && !loading && !error" class="card">
-    <h2>Historial de ventas</h2>
+    <div class="section-header">
+      <h2>Historial de ventas</h2>
+      <button type="button" (click)="downloadSalesCsv()">Exportar ventas CSV</button>
+    </div>
     <table>
       <thead>
         <tr>

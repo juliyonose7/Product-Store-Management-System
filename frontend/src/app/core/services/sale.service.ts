@@ -24,4 +24,8 @@ export class SaleService {
   createSale(payload: CreateSaleRequest): Observable<Sale> {
     return this.http.post<Sale>(this.endpoint, payload);
   }
+
+  exportSalesCsv(): Observable<Blob> {
+    return this.http.get(`${this.endpoint}/export`, { responseType: 'blob' });
+  }
 }

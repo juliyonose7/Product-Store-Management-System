@@ -15,4 +15,8 @@ export class MetricsService {
   getDashboardMetrics(): Observable<DashboardMetrics> {
     return this.http.get<DashboardMetrics>(this.endpoint);
   }
+
+  exportMetricsCsv(): Observable<Blob> {
+    return this.http.get(`${environment.apiBaseUrl}/metrics/export`, { responseType: 'blob' });
+  }
 }

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.StringJoiner;
 
 @Service
 public class SaleService {
@@ -97,5 +98,35 @@ public class SaleService {
             return "system";
         }
         return authentication.getName();
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] exportSalesCsv() {
+        StringBuilder csv = new StringBuilder();
+        csv.append("id_venta,id_producto,producto,cantidad,fecha_venta,precio_unitario,subtotal,creado_por,creado_en,actualizado_en\n");
+
+        for (SaleResponse sale : findAll()) {
+            StringJoiner row = new StringJoiner(",");
+            row.add(String.valueOf(sale.id()));
+            row.add(String.valueOf(sale.productId()));
+            row.add(escapeCsv(sale.productName()));
+            row.add(String.valueOf(sale.quantity()));
+            row.add(String.valueOf(sale.saleDate()));
+            row.add(String.valueOf(sale.unitPrice()));
+            row.add(String.valueOf(sale.subtotal()));
+            row.add(escapeCsv(sale.createdBy()));
+            row.add(String.valueOf(sale.createdAt()));
+            row.add(String.valueOf(sale.updatedAt()));
+            csv.append(row).append("\n");
+        }
+
+        return csv.toString().getBytes();
+    }
+
+    private String escapeCsv(String value) {
+        if (value == null) {
+            return "";
+        }
+        return "\"" + value.replace("\"", "\"\"") + "\"";
     }
 }

@@ -143,6 +143,20 @@ export class App implements OnInit, OnDestroy {
     });
   }
 
+  downloadSalesCsv(): void {
+    this.saleService.exportSalesCsv().subscribe({
+      next: (blob) => this.downloadBlob(blob, 'sales-report.csv'),
+      error: (err) => this.handleDownloadError(err)
+    });
+  }
+
+  downloadMetricsCsv(): void {
+    this.metricsService.exportMetricsCsv().subscribe({
+      next: (blob) => this.downloadBlob(blob, 'metrics-report.csv'),
+      error: (err) => this.handleDownloadError(err)
+    });
+  }
+
   private loadDashboardData(): void {
     this.loading = true;
 
@@ -241,5 +255,23 @@ export class App implements OnInit, OnDestroy {
       clearInterval(this.sessionInterval);
       this.sessionInterval = null;
     }
+  }
+
+  private downloadBlob(blob: Blob, fileName: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = fileName;
+    anchor.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  private handleDownloadError(err: any): void {
+    if (err?.status === 401 || err?.status === 403) {
+      this.logout();
+      this.loginError = 'Tu sesión expiró. Inicia sesión nuevamente.';
+      return;
+    }
+    this.error = 'No se pudo descargar el reporte CSV.';
   }
 }

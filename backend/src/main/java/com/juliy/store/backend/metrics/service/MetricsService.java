@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.StringJoiner;
 
 @Service
 public class MetricsService {
@@ -52,4 +53,47 @@ public class MetricsService {
 
         return new DashboardMetricsResponse(summary, daily, topProducts);
     }
+
+        @Transactional(readOnly = true)
+        public byte[] exportMetricsCsv() {
+                DashboardMetricsResponse metrics = getDashboardMetrics();
+
+                StringBuilder csv = new StringBuilder();
+                csv.append("section,key,value\n");
+                csv.append("summary,totalRevenueMonth,").append(metrics.summary().totalRevenueMonth()).append("\n");
+                csv.append("summary,totalSalesMonth,").append(metrics.summary().totalSalesMonth()).append("\n");
+                csv.append("summary,totalQuantityMonth,").append(metrics.summary().totalQuantityMonth()).append("\n\n");
+
+                csv.append("dailySales,saleDate,totalRevenue,totalQuantity,totalSales\n");
+                for (DailySalesMetricResponse day : metrics.dailySales()) {
+                        StringJoiner row = new StringJoiner(",");
+                        row.add("dailySales");
+                        row.add(String.valueOf(day.saleDate()));
+                        row.add(String.valueOf(day.totalRevenue()));
+                        row.add(String.valueOf(day.totalQuantity()));
+                        row.add(String.valueOf(day.totalSales()));
+                        csv.append(row).append("\n");
+                }
+
+                csv.append("\n");
+                csv.append("topProducts,productId,productName,totalQuantity,totalRevenue\n");
+                for (TopProductMetricResponse product : metrics.topProducts()) {
+                        StringJoiner row = new StringJoiner(",");
+                        row.add("topProducts");
+                        row.add(String.valueOf(product.productId()));
+                        row.add(escapeCsv(product.productName()));
+                        row.add(String.valueOf(product.totalQuantity()));
+                        row.add(String.valueOf(product.totalRevenue()));
+                        csv.append(row).append("\n");
+                }
+
+                return csv.toString().getBytes();
+        }
+
+        private String escapeCsv(String value) {
+                if (value == null) {
+                        return "";
+                }
+                return "\"" + value.replace("\"", "\"\"") + "\"";
+        }
 }
