@@ -61,6 +61,31 @@ table {
 	margin-top: 0.75rem;
 }
 
+.metrics-cards {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0.75rem;
+	margin-top: 0.75rem;
+}
+
+.metric-card {
+	padding: 0.75rem;
+	border: 1px solid #e7e7e7;
+	border-radius: 8px;
+	background: #fafafa;
+	display: grid;
+	gap: 0.25rem;
+}
+
+.metric-card span {
+	font-size: 0.85rem;
+	color: #666;
+}
+
+.metric-card strong {
+	font-size: 1.05rem;
+}
+
 .sale-form {
 	display: grid;
 	grid-template-columns: 1fr 180px auto;

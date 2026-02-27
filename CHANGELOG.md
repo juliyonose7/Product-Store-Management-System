@@ -4,6 +4,14 @@ All notable changes to this project are documented in this file.
 
 The format is based on Keep a Changelog and follows Semantic Versioning.
 
+## [0.8.0] - 2026-02-27
+
+### Added
+- Business metrics endpoint `GET /api/metrics/dashboard`.
+- Monthly summary metrics: total revenue, total sales, total units sold.
+- Last 7 days sales trend and top 5 products of current month.
+- Angular metrics dashboard with cards and metric tables.
+
 ## [0.7.0] - 2026-02-27
 
 ### Added

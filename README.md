@@ -10,7 +10,7 @@
 
 This project uses [Semantic Versioning](https://semver.org/) with tags in the format `vX.Y.Z`.
 
-- Current version: `0.7.0`
+- Current version: `0.8.0`
 - Changelog: `CHANGELOG.md`
 
 ### How to publish a new version
@@ -20,10 +20,10 @@ This project uses [Semantic Versioning](https://semver.org/) with tags in the fo
 
 # 2) Commit changes
 git add VERSION CHANGELOG.md README.md
-git commit -m "chore(release): v0.7.0"
+git commit -m "chore(release): v0.8.0"
 
 # 3) Create and push tag
-git tag v0.7.0
+git tag v0.8.0
 git push origin main --tags
 ```
 
@@ -199,6 +199,9 @@ Sales endpoints:
 - `POST /api/sales`
 - `GET /api/sales/activity`
 
+Metrics endpoint:
+- `GET /api/metrics/dashboard`
+
 Demo users:
 - `admin` / `admin123` (role `ADMIN`)
 - `cajero` / `cajero123` (role `CAJERO`)
@@ -227,6 +230,7 @@ Current frontend features:
 - Login and logout with JWT.
 - Automatic session refresh.
 - Session countdown (time remaining).
+- Metrics dashboard (summary, trend, top products).
 - Product listing with live stock.
 - Sale registration form.
 - Sales history with subtotal calculation.

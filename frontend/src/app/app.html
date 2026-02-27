@@ -30,6 +30,68 @@
   <section *ngIf="isAuthenticated && error" class="state error">{{ error }}</section>
 
   <section *ngIf="isAuthenticated && !loading && !error" class="card">
+    <h2>Métricas del mes</h2>
+    <div class="metrics-cards" *ngIf="metrics as m">
+      <div class="metric-card">
+        <span>Total ingresos</span>
+        <strong>{{ m.summary.totalRevenueMonth | currency:'USD' }}</strong>
+      </div>
+      <div class="metric-card">
+        <span>Total ventas</span>
+        <strong>{{ m.summary.totalSalesMonth }}</strong>
+      </div>
+      <div class="metric-card">
+        <span>Unidades vendidas</span>
+        <strong>{{ m.summary.totalQuantityMonth }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <section *ngIf="isAuthenticated && !loading && !error && metrics as m" class="card">
+    <h2>Ventas últimos 7 días</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Ingresos</th>
+          <th>Unidades</th>
+          <th>Ventas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let day of m.dailySales">
+          <td>{{ day.saleDate }}</td>
+          <td>{{ day.totalRevenue | currency:'USD' }}</td>
+          <td>{{ day.totalQuantity }}</td>
+          <td>{{ day.totalSales }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section *ngIf="isAuthenticated && !loading && !error && metrics as m" class="card">
+    <h2>Top productos del mes</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Producto</th>
+          <th>Unidades</th>
+          <th>Ingresos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of m.topProducts">
+          <td>{{ product.productId }}</td>
+          <td>{{ product.productName }}</td>
+          <td>{{ product.totalQuantity }}</td>
+          <td>{{ product.totalRevenue | currency:'USD' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section *ngIf="isAuthenticated && !loading && !error" class="card">
     <h2>Registrar venta</h2>
     <form (ngSubmit)="registerSale()" class="sale-form">
       <label>

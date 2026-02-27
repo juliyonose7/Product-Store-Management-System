@@ -6,6 +6,8 @@ import { ProductService } from './core/services/product.service';
 import { Sale } from './core/models/sale.model';
 import { SaleService } from './core/services/sale.service';
 import { AuthService } from './core/services/auth.service';
+import { DashboardMetrics } from './core/models/metrics.model';
+import { MetricsService } from './core/services/metrics.service';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +19,7 @@ export class App implements OnInit, OnDestroy {
   products: Product[] = [];
   sales: Sale[] = [];
   salesActivity: Sale[] = [];
+  metrics: DashboardMetrics | null = null;
   loading = true;
   error = '';
   saleError = '';
@@ -42,7 +45,8 @@ export class App implements OnInit, OnDestroy {
   constructor(
     private readonly authService: AuthService,
     private readonly productService: ProductService,
-    private readonly saleService: SaleService
+    private readonly saleService: SaleService,
+    private readonly metricsService: MetricsService
   ) {}
 
   ngOnInit(): void {
@@ -94,6 +98,8 @@ export class App implements OnInit, OnDestroy {
     this.sessionRemainingSeconds = 0;
     this.products = [];
     this.sales = [];
+    this.salesActivity = [];
+    this.metrics = null;
     this.error = '';
     this.saleError = '';
     this.saleSuccess = '';
@@ -179,6 +185,24 @@ export class App implements OnInit, OnDestroy {
     this.saleService.getSalesActivity().subscribe({
       next: (items) => {
         this.salesActivity = items;
+        this.loadMetrics();
+      },
+      error: (err) => {
+        if (err?.status === 401 || err?.status === 403) {
+          this.logout();
+          this.loginError = 'Tu sesión expiró. Inicia sesión nuevamente.';
+          return;
+        }
+        this.error = 'No se pudo cargar la actividad reciente de ventas.';
+        this.loading = false;
+      }
+    });
+  }
+
+  private loadMetrics(): void {
+    this.metricsService.getDashboardMetrics().subscribe({
+      next: (items) => {
+        this.metrics = items;
         this.error = '';
         this.loading = false;
       },
@@ -188,7 +212,7 @@ export class App implements OnInit, OnDestroy {
           this.loginError = 'Tu sesión expiró. Inicia sesión nuevamente.';
           return;
         }
-        this.error = 'No se pudo cargar la actividad reciente de ventas.';
+        this.error = 'No se pudieron cargar las métricas del dashboard.';
         this.loading = false;
       }
     });
