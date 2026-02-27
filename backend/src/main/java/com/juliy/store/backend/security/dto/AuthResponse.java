@@ -1,9 +1,13 @@
 package com.juliy.store.backend.security.dto;
 
 public record AuthResponse(
-        String token,
+        String accessToken,
+        String refreshToken,
         String tokenType,
         String username,
-        String role
+        String role,
+        long accessTokenExpiresAt,
+        long refreshTokenExpiresAt
 ) {
 }
+

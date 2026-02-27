@@ -4,6 +4,18 @@ All notable changes to this project are documented in this file.
 
 The format is based on Keep a Changelog and follows Semantic Versioning.
 
+## [0.5.0] - 2026-02-27
+
+### Added
+- Refresh token endpoint `POST /api/auth/refresh`.
+- Access/refresh token expiration metadata in auth responses.
+- Frontend automatic session renewal before token expiration.
+- Session countdown timer in Angular UI.
+
+### Security
+- Distinct access and refresh token handling.
+- Improved JWT filter resilience for invalid tokens.
+
 ## [0.4.0] - 2026-02-26
 
 ### Added

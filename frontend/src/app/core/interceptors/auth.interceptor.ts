@@ -1,7 +1,7 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = localStorage.getItem('psms_token');
+  const token = localStorage.getItem('psms_access_token');
 
   if (!token) {
     return next(req);

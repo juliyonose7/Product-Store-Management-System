@@ -4,6 +4,7 @@
     <p>Frontend Angular consumiendo API Spring Boot</p>
     <p *ngIf="isAuthenticated" class="session-info">
       Sesión: {{ username }} ({{ role }})
+      <span>Expira en: {{ sessionTimeLabel }}</span>
       <button type="button" (click)="logout()">Cerrar sesión</button>
     </p>
   </header>

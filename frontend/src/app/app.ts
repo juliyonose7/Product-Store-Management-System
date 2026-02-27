@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Product } from './core/models/product.model';
@@ -13,7 +13,7 @@ import { AuthService } from './core/services/auth.service';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App implements OnInit {
+export class App implements OnInit, OnDestroy {
   products: Product[] = [];
   sales: Sale[] = [];
   loading = true;
@@ -24,6 +24,9 @@ export class App implements OnInit {
   isAuthenticated = false;
   username = '';
   role = '';
+  sessionRemainingSeconds = 0;
+
+  private sessionInterval: ReturnType<typeof setInterval> | null = null;
 
   credentials = {
     username: '',
@@ -47,11 +50,17 @@ export class App implements OnInit {
     this.role = this.authService.getRole();
 
     if (this.isAuthenticated) {
+      this.initSessionAutomation();
       this.loadDashboardData();
       return;
     }
 
     this.loading = false;
+  }
+
+  ngOnDestroy(): void {
+    this.stopSessionCountdown();
+    this.authService.stopAutoRefresh();
   }
 
   login(): void {
@@ -64,6 +73,7 @@ export class App implements OnInit {
         this.username = this.authService.getUsername();
         this.role = this.authService.getRole();
         this.credentials.password = '';
+        this.initSessionAutomation();
         this.loadDashboardData();
       },
       error: () => {
@@ -74,16 +84,27 @@ export class App implements OnInit {
   }
 
   logout(): void {
+    this.authService.stopAutoRefresh();
+    this.stopSessionCountdown();
     this.authService.logout();
     this.isAuthenticated = false;
     this.username = '';
     this.role = '';
+    this.sessionRemainingSeconds = 0;
     this.products = [];
     this.sales = [];
     this.error = '';
     this.saleError = '';
     this.saleSuccess = '';
     this.credentials.password = '';
+  }
+
+  get sessionTimeLabel(): string {
+    const minutes = Math.floor(this.sessionRemainingSeconds / 60)
+      .toString()
+      .padStart(2, '0');
+    const seconds = (this.sessionRemainingSeconds % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
   }
 
   registerSale(): void {
@@ -152,5 +173,30 @@ export class App implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  private initSessionAutomation(): void {
+    this.authService.startAutoRefresh(() => {
+      this.logout();
+      this.loginError = 'Tu sesión expiró. Inicia sesión nuevamente.';
+    });
+
+    this.startSessionCountdown();
+  }
+
+  private startSessionCountdown(): void {
+    this.stopSessionCountdown();
+    this.sessionRemainingSeconds = this.authService.getRemainingSessionSeconds();
+
+    this.sessionInterval = setInterval(() => {
+      this.sessionRemainingSeconds = this.authService.getRemainingSessionSeconds();
+    }, 1000);
+  }
+
+  private stopSessionCountdown(): void {
+    if (this.sessionInterval) {
+      clearInterval(this.sessionInterval);
+      this.sessionInterval = null;
+    }
   }
 }
