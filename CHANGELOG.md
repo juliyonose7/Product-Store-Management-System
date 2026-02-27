@@ -4,6 +4,17 @@ All notable changes to this project are documented in this file.
 
 The format is based on Keep a Changelog and follows Semantic Versioning.
 
+## [0.6.0] - 2026-02-27
+
+### Added
+- Database-backed authentication users table (`usuarios`) in SQL setup.
+- Custom `UserDetailsService` loading users from MySQL.
+
+### Security
+- Endpoint authorization refined by method and resource.
+- Product write operations restricted to `ADMIN`.
+- Sales read/write available to `ADMIN` and `CAJERO`.
+
 ## [0.5.0] - 2026-02-27
 
 ### Added

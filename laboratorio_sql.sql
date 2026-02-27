@@ -36,6 +36,21 @@ CREATE TABLE registro_ventas (
     FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
 );
 
+-- Application users for API authentication
+CREATE TABLE usuarios (
+    username VARCHAR(50) PRIMARY KEY,
+    password VARCHAR(120) NOT NULL,
+    role VARCHAR(30) NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+-- Demo credentials:
+-- admin / admin123
+-- cajero / cajero123
+INSERT INTO usuarios (username, password, role, enabled) VALUES
+('admin', '{noop}admin123', 'ADMIN', TRUE),
+('cajero', '{noop}cajero123', 'CAJERO', TRUE);
+
 -- ============================================================================
 -- ACTIVITY 2: Cursor usage to calculate total sales
 -- ============================================================================
