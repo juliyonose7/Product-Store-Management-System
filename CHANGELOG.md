@@ -4,6 +4,16 @@ All notable changes to this project are documented in this file.
 
 The format is based on Keep a Changelog and follows Semantic Versioning.
 
+## [1.0.0] - 2026-02-27
+
+### Added
+- Backend unit tests for JWT token flow and metrics service mapping.
+- Deployment checklist in `DEPLOYMENT_CHECKLIST.md`.
+- Local startup scripts: `scripts/start-dev.ps1` and `scripts/start-dev.bat`.
+
+### Changed
+- Backend Java version normalized to 17 in `backend/pom.xml`.
+
 ## [0.9.0] - 2026-02-27
 
 ### Added

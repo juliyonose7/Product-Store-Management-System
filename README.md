@@ -10,7 +10,7 @@
 
 This project uses [Semantic Versioning](https://semver.org/) with tags in the format `vX.Y.Z`.
 
-- Current version: `0.9.0`
+- Current version: `1.0.0`
 - Changelog: `CHANGELOG.md`
 
 ### How to publish a new version
@@ -20,12 +20,26 @@ This project uses [Semantic Versioning](https://semver.org/) with tags in the fo
 
 # 2) Commit changes
 git add VERSION CHANGELOG.md README.md
-git commit -m "chore(release): v0.9.0"
+git commit -m "chore(release): v1.0.0"
 
 # 3) Create and push tag
-git tag v0.9.0
+git tag v1.0.0
 git push origin main --tags
 ```
+
+## Quick start (script)
+
+Use local startup script from repository root:
+
+```bash
+scripts/start-dev.bat
+```
+
+This opens backend and frontend in separate terminals.
+
+## Deployment checklist
+
+See `DEPLOYMENT_CHECKLIST.md` before production deployment.
 
 ## Current architecture (in migration)
 
@@ -227,6 +241,12 @@ npm --prefix frontend start
 ```
 
 Frontend URL: `http://localhost:4200`
+
+## Basic tests
+
+Backend unit tests include:
+- JWT generation/validation flow.
+- Metrics service mapping logic.
 
 Current frontend features:
 - Login and logout with JWT.
