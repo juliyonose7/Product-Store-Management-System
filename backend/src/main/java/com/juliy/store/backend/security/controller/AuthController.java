@@ -2,15 +2,20 @@ package com.juliy.store.backend.security.controller;
 
 import com.juliy.store.backend.security.dto.AuthRequest;
 import com.juliy.store.backend.security.dto.AuthResponse;
+import com.juliy.store.backend.security.dto.FirstAccessPasswordRequest;
 import com.juliy.store.backend.security.dto.RefreshTokenRequest;
+import com.juliy.store.backend.security.repository.AppUserRepository;
 import com.juliy.store.backend.security.service.JwtService;
+import com.juliy.store.backend.security.service.UserManagementService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,15 +28,21 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
+    private final AppUserRepository appUserRepository;
+    private final UserManagementService userManagementService;
 
     public AuthController(
             AuthenticationManager authenticationManager,
             UserDetailsService userDetailsService,
-            JwtService jwtService
+            JwtService jwtService,
+            AppUserRepository appUserRepository,
+            UserManagementService userManagementService
     ) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
+        this.appUserRepository = appUserRepository;
+        this.userManagementService = userManagementService;
     }
 
     @PostMapping("/login")
@@ -40,8 +51,23 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
 
+        boolean mustChangePassword = appUserRepository.findByUsernameAndEnabledTrue(request.username())
+                .map(user -> Boolean.TRUE.equals(user.getMustChangePassword()))
+                .orElse(false);
+
+        if (mustChangePassword) {
+            throw new IllegalStateException("FIRST_ACCESS_PASSWORD_CHANGE_REQUIRED");
+        }
+
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        userManagementService.registerConnection(userDetails.getUsername());
         return buildAuthResponse(userDetails);
+    }
+
+    @PostMapping("/first-access")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void completeFirstAccess(@Valid @RequestBody FirstAccessPasswordRequest request) {
+        userManagementService.completeFirstAccess(request);
     }
 
     @PostMapping("/refresh")
@@ -53,6 +79,7 @@ public class AuthController {
             throw new IllegalArgumentException("Invalid refresh token");
         }
 
+        userManagementService.registerConnection(userDetails.getUsername());
         return buildAuthResponse(userDetails);
     }
 

@@ -4,10 +4,18 @@
     <p>Frontend Angular consumiendo API Spring Boot</p>
     <p *ngIf="isAuthenticated" class="session-info">
       Sesión: {{ username }} ({{ role }})
+      <span>Usuarios conectados: {{ connectedUsers }}</span>
       <span>Expira en: {{ sessionTimeLabel }}</span>
       <button type="button" (click)="logout()">Cerrar sesión</button>
     </p>
   </header>
+
+  <nav *ngIf="isAuthenticated" class="tabs-nav">
+    <button type="button" [class.active]="activeTab === 'dashboard'" (click)="setActiveTab('dashboard')">Dashboard</button>
+    <button type="button" [class.active]="activeTab === 'ventas'" (click)="setActiveTab('ventas')">Ventas</button>
+    <button type="button" [class.active]="activeTab === 'productos'" (click)="setActiveTab('productos')">Productos</button>
+    <button type="button" [class.active]="activeTab === 'cuenta'" (click)="setActiveTab('cuenta')">Cuenta</button>
+  </nav>
 
   <section *ngIf="!isAuthenticated" class="card auth-card">
     <h2>Iniciar sesión</h2>
@@ -18,18 +26,53 @@
       </label>
       <label>
         Contraseña
-        <input type="password" [(ngModel)]="credentials.password" name="password" required />
+        <div class="password-row">
+          <input [type]="isPasswordVisible ? 'text' : 'password'" [(ngModel)]="credentials.password" name="password" required />
+          <button
+            type="button"
+            class="secondary-button"
+            (mousedown)="showPassword()"
+            (mouseup)="hidePassword()"
+            (mouseleave)="hidePassword()"
+            (touchstart)="showPassword()"
+            (touchend)="hidePassword()"
+            (touchcancel)="hidePassword()"
+          >
+            Mostrar
+          </button>
+        </div>
       </label>
       <button type="submit">Entrar</button>
     </form>
     <p class="hint">Usuarios de prueba: admin/admin123 y cajero/cajero123</p>
     <p *ngIf="loginError" class="message error-text">{{ loginError }}</p>
+
+    <form *ngIf="firstAccessRequired" (ngSubmit)="completeFirstAccess()" class="auth-form">
+      <h3>Primer acceso: crea tu contraseña</h3>
+      <label>
+        Usuario
+        <input type="text" [(ngModel)]="firstAccessForm.username" name="firstAccessUsername" readonly />
+      </label>
+      <label>
+        Contraseña temporal
+        <input type="password" [(ngModel)]="firstAccessForm.temporaryPassword" name="firstAccessTempPassword" required />
+      </label>
+      <label>
+        Nueva contraseña
+        <input type="password" [(ngModel)]="firstAccessForm.newPassword" name="firstAccessNewPassword" required />
+      </label>
+      <label>
+        Confirmar nueva contraseña
+        <input type="password" [(ngModel)]="firstAccessForm.confirmPassword" name="firstAccessConfirmPassword" required />
+      </label>
+      <button type="submit">Guardar nueva contraseña</button>
+    </form>
   </section>
 
   <section *ngIf="isAuthenticated && loading" class="state">Cargando productos...</section>
   <section *ngIf="isAuthenticated && error" class="state error">{{ error }}</section>
 
-  <section *ngIf="isAuthenticated && !loading && !error" class="card">
+  <section *ngIf="isAuthenticated && activeTab === 'dashboard' && !loading && !error" class="card">
     <div class="section-header">
       <h2>Métricas del mes</h2>
       <button type="button" (click)="downloadMetricsCsv()">Exportar métricas CSV</button>
@@ -50,7 +93,31 @@
     </div>
   </section>
 
-  <section *ngIf="isAuthenticated && !loading && !error && metrics as m" class="card">
+  <section *ngIf="isAuthenticated && activeTab === 'dashboard' && !loading && !error && metrics" class="card">
+    <h2>Dashboard gráfico</h2>
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Ingresos diarios vs total mensual</h3>
+        <div class="chart-box">
+          <canvas id="dailyRevenueChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <h3>Ventas diarias vs total mensual</h3>
+        <div class="chart-box">
+          <canvas id="dailyUnitsChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card chart-card-wide">
+        <h3>Top productos por ingresos</h3>
+        <div class="chart-box">
+          <canvas id="topProductsChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section *ngIf="isAuthenticated && activeTab === 'dashboard' && !loading && !error && metrics as m" class="card">
     <h2>Ventas últimos 7 días</h2>
     <table>
       <thead>
@@ -72,7 +139,7 @@
     </table>
   </section>
 
-  <section *ngIf="isAuthenticated && !loading && !error && metrics as m" class="card">
+  <section *ngIf="isAuthenticated && activeTab === 'dashboard' && !loading && !error && metrics as m" class="card">
     <h2>Top productos del mes</h2>
     <table>
       <thead>
@@ -94,7 +161,7 @@
     </table>
   </section>
 
-  <section *ngIf="isAuthenticated && !loading && !error" class="card">
+  <section *ngIf="isAuthenticated && activeTab === 'ventas' && !loading && !error" class="card">
     <h2>Registrar venta</h2>
     <form (ngSubmit)="registerSale()" class="sale-form">
       <label>
@@ -119,8 +186,148 @@
     <p *ngIf="saleError" class="message error-text">{{ saleError }}</p>
   </section>
 
-  <section *ngIf="isAuthenticated && !loading && !error" class="card">
+  <section *ngIf="isAuthenticated && activeTab === 'cuenta' && !loading && !error" class="card">
+    <h2>Mi contraseña</h2>
+    <p><strong>Total de usuarios registrados:</strong> {{ totalUsersRegistered }}</p>
+    <form (ngSubmit)="changeOwnPassword()" class="password-change-form">
+      <label>
+        Contraseña actual
+        <input type="password" [(ngModel)]="changePasswordForm.currentPassword" name="currentPassword" required />
+      </label>
+      <label>
+        Nueva contraseña
+        <input type="password" [(ngModel)]="changePasswordForm.newPassword" name="newPassword" required />
+      </label>
+      <label>
+        Confirmar nueva contraseña
+        <input type="password" [(ngModel)]="changePasswordForm.confirmPassword" name="confirmPassword" required />
+      </label>
+      <button type="submit">Cambiar contraseña</button>
+    </form>
+
+    <p *ngIf="passwordSuccess" class="message success">{{ passwordSuccess }}</p>
+    <p *ngIf="passwordError" class="message error-text">{{ passwordError }}</p>
+    <p *ngIf="usersOverviewError" class="message error-text">{{ usersOverviewError }}</p>
+
+    <h3>Usuarios y última conexión</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>Última conexión</th>
+          <th *ngIf="isAdmin">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of usersStatus">
+          <td>{{ user.username }}</td>
+          <td>{{ user.role }}</td>
+          <td>{{ user.enabled ? (user.connected ? 'Conectado' : 'Desconectado') : 'Desactivado' }}</td>
+          <td>{{ user.lastConnectionAt ? (user.lastConnectionAt | date:'yyyy-MM-dd HH:mm:ss') : 'Sin registros' }}</td>
+          <td *ngIf="isAdmin">
+            <button type="button" (click)="toggleUserEnabled(user)" [disabled]="user.username === username">
+              {{ user.enabled ? 'Desactivar' : 'Activar' }}
+            </button>
+            <button type="button" class="danger-button" (click)="requestDeleteUser(user.username)" [disabled]="user.username === username">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="usersStatus.length === 0">
+          <td [attr.colspan]="isAdmin ? 5 : 4">No hay usuarios para mostrar.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section *ngIf="isAuthenticated && activeTab === 'cuenta' && !loading && !error && isAdmin" class="card">
+    <h2>Gestión de usuarios (solo admin)</h2>
+    <form (ngSubmit)="createUser()" class="user-form">
+      <label>
+        Usuario
+        <input type="text" [(ngModel)]="createUserForm.username" name="createUsername" required />
+      </label>
+      <label>
+        Rol
+        <select [(ngModel)]="createUserForm.role" name="createRole" required>
+          <option value="CAJERO">CAJERO</option>
+          <option value="ADMIN">ADMIN</option>
+        </select>
+      </label>
+      <label>
+        Contraseña temporal
+        <input type="password" [(ngModel)]="createUserForm.temporaryPassword" name="createTemporaryPassword" required />
+      </label>
+      <button type="submit">Crear usuario</button>
+    </form>
+
+    <form (ngSubmit)="resetUserPassword()" class="user-form">
+      <label>
+        Usuario a reiniciar
+        <select [(ngModel)]="resetPasswordForm.username" name="resetUsername" required>
+          <option value="" disabled>Selecciona un usuario</option>
+          <option *ngFor="let user of usersStatus" [value]="user.username" [disabled]="user.username === username">
+            {{ user.username }}
+          </option>
+        </select>
+      </label>
+      <label>
+        Contraseña temporal nueva
+        <input type="password" [(ngModel)]="resetPasswordForm.temporaryPassword" name="resetTemporaryPassword" required />
+      </label>
+      <button type="submit">Reiniciar contraseña</button>
+    </form>
+
+    <p *ngIf="userSuccess" class="message success">{{ userSuccess }}</p>
+    <p *ngIf="userError" class="message error-text">{{ userError }}</p>
+    <p *ngIf="adminActionSuccess" class="message success">{{ adminActionSuccess }}</p>
+    <p *ngIf="adminActionError" class="message error-text">{{ adminActionError }}</p>
+  </section>
+
+  <section *ngIf="showDeleteUserModal" class="modal-backdrop">
+    <div class="modal-card">
+      <h3>Confirmar eliminación</h3>
+      <p>¿Seguro que deseas eliminar al usuario <strong>{{ pendingDeleteUsername }}</strong>?</p>
+      <div class="modal-actions">
+        <button type="button" class="secondary-button" (click)="cancelDeleteUser()">Cancelar</button>
+        <button type="button" class="danger-button" (click)="confirmDeleteUser()">Eliminar</button>
+      </div>
+    </div>
+  </section>
+
+  <section *ngIf="isAuthenticated && activeTab === 'productos' && !loading && !error" class="card">
     <h2>Productos</h2>
+    <div class="product-actions">
+      <form (ngSubmit)="createProduct()" class="product-form">
+        <label>
+          Nombre
+          <input type="text" [(ngModel)]="productForm.name" name="productName" required />
+        </label>
+        <label>
+          Precio
+          <input type="number" min="0.01" step="0.01" [(ngModel)]="productForm.price" name="productPrice" required />
+        </label>
+        <label>
+          Stock
+          <input type="number" min="0" [(ngModel)]="productForm.stock" name="productStock" required />
+        </label>
+        <button type="submit">Agregar producto</button>
+      </form>
+
+      <div class="csv-form">
+        <label>
+          Carga masiva CSV (name,price,stock)
+          <input type="file" accept=".csv" (change)="onProductsCsvSelected($event)" />
+        </label>
+        <button type="button" (click)="importProductsCsv()">Importar CSV</button>
+      </div>
+    </div>
+
+    <p *ngIf="productSuccess" class="message success">{{ productSuccess }}</p>
+    <p *ngIf="productError" class="message error-text">{{ productError }}</p>
+
     <table>
       <thead>
         <tr>
@@ -141,7 +348,7 @@
     </table>
   </section>
 
-  <section *ngIf="isAuthenticated && !loading && !error" class="card">
+  <section *ngIf="isAuthenticated && activeTab === 'ventas' && !loading && !error" class="card">
     <div class="section-header">
       <h2>Historial de ventas</h2>
       <button type="button" (click)="downloadSalesCsv()">Exportar ventas CSV</button>
@@ -170,7 +377,7 @@
     </table>
   </section>
 
-  <section *ngIf="isAuthenticated && !loading && !error" class="card">
+  <section *ngIf="isAuthenticated && activeTab === 'ventas' && !loading && !error" class="card">
     <h2>Actividad reciente</h2>
     <table>
       <thead>

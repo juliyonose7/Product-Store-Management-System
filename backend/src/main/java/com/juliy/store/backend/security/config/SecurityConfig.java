@@ -24,25 +24,26 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AppUserDetailsService appUserDetailsService;
 
     public SecurityConfig(
-            JwtAuthenticationFilter jwtAuthenticationFilter,
             AppUserDetailsService appUserDetailsService
     ) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.appUserDetailsService = appUserDetailsService;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .requestMatchers("/api/auth/login", "/api/auth/refresh", "/actuator/health", "/error").permitAll()
+                    .requestMatchers("/api/auth/login", "/api/auth/refresh", "/api/auth/first-access", "/actuator/health", "/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/count").hasAnyRole("ADMIN", "CAJERO")
+                        .requestMatchers(HttpMethod.GET, "/api/users/status").hasAnyRole("ADMIN", "CAJERO")
+                        .requestMatchers(HttpMethod.POST, "/api/users/me/password").hasAnyRole("ADMIN", "CAJERO")
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/products/**").hasAnyRole("ADMIN", "CAJERO")
                         .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")

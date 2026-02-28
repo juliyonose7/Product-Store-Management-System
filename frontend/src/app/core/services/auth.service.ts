@@ -11,6 +11,8 @@ import { AuthResponse } from '../models/auth-response.model';
 export class AuthService {
   private readonly loginEndpoint = `${environment.apiBaseUrl}/auth/login`;
   private readonly refreshEndpoint = `${environment.apiBaseUrl}/auth/refresh`;
+  private readonly firstAccessEndpoint = `${environment.apiBaseUrl}/auth/first-access`;
+  private readonly changeOwnPasswordEndpoint = `${environment.apiBaseUrl}/users/me/password`;
   private readonly accessTokenKey = 'psms_access_token';
   private readonly refreshTokenKey = 'psms_refresh_token';
   private readonly userKey = 'psms_user';
@@ -31,6 +33,14 @@ export class AuthService {
     return this.http
       .post<AuthResponse>(this.refreshEndpoint, { refreshToken: this.getRefreshToken() })
       .pipe(tap((response) => this.storeSession(response)));
+  }
+
+  completeFirstAccess(payload: { username: string; temporaryPassword: string; newPassword: string }): Observable<void> {
+    return this.http.post<void>(this.firstAccessEndpoint, payload);
+  }
+
+  changeOwnPassword(payload: { currentPassword: string; newPassword: string }): Observable<void> {
+    return this.http.post<void>(this.changeOwnPasswordEndpoint, payload);
   }
 
   logout(): void {

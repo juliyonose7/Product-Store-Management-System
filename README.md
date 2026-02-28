@@ -5,12 +5,15 @@
 ![Swing](https://img.shields.io/badge/Swing-GUI-blue?style=for-the-badge)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
 ![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+[![CI-CD](https://github.com/juliyonose7/Product-Store-Management-System/actions/workflows/ci.yml/badge.svg)](https://github.com/juliyonose7/Product-Store-Management-System/actions/workflows/ci.yml)
+[![Deploy](https://github.com/juliyonose7/Product-Store-Management-System/actions/workflows/deploy.yml/badge.svg)](https://github.com/juliyonose7/Product-Store-Management-System/actions/workflows/deploy.yml)
 
 ## Versioning
 
 This project uses [Semantic Versioning](https://semver.org/) with tags in the format `vX.Y.Z`.
 
 - Current version: `1.0.0`
+- Current version: `1.1.0`
 - Changelog: `CHANGELOG.md`
 
 ### How to publish a new version
@@ -20,10 +23,10 @@ This project uses [Semantic Versioning](https://semver.org/) with tags in the fo
 
 # 2) Commit changes
 git add VERSION CHANGELOG.md README.md
-git commit -m "chore(release): v1.0.0"
+git commit -m "chore(release): v1.1.0"
 
 # 3) Create and push tag
-git tag v1.0.0
+git tag v1.1.0
 git push origin main --tags
 ```
 
@@ -37,9 +40,62 @@ scripts/start-dev.bat
 
 This opens backend and frontend in separate terminals.
 
+## Docker (recommended for local full stack)
+
+This repository includes Docker support for:
+- `mysql` (MySQL 8)
+- `backend` (Spring Boot)
+- `frontend` (Angular built and served by Nginx)
+
+### 1) Prepare environment
+
+```bash
+cp .env.example .env
+```
+
+### 2) Build and run all services
+
+```bash
+docker compose up --build -d
+```
+
+### 3) Access services
+
+- Frontend: `http://localhost:4200`
+- Backend health: `http://localhost:8080/actuator/health`
+
+### 4) Stop services
+
+```bash
+docker compose down
+```
+
+To reset database volume too:
+
+```bash
+docker compose down -v
+```
+
 ## Deployment checklist
 
 See `DEPLOYMENT_CHECKLIST.md` before production deployment.
+
+## CI/CD
+
+GitHub Actions workflow is configured in [.github/workflows/ci.yml](.github/workflows/ci.yml).
+
+It runs on every push and pull request to `main` and executes:
+- Backend build (`./mvnw -DskipTests clean package`)
+- Frontend build (`npm ci && npm run build`)
+- Docker validation (`docker compose config --quiet`)
+- Docker image build for backend and frontend
+
+Deployment pipeline is separated in [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
+
+Deploy workflow:
+- Runs automatically after CI succeeds on `main` (via `workflow_run`)
+- Can be executed manually (`workflow_dispatch`)
+- Builds and publishes Docker images to GHCR for backend and frontend
 
 ## Current architecture (in migration)
 
@@ -50,16 +106,18 @@ See `DEPLOYMENT_CHECKLIST.md` before production deployment.
 
 ## Description
 
-Store management system that integrates a Java Swing user interface with a MySQL database. The project implements cursors, functions, stored procedures, and triggers to manage products and sales.
+Store management system with Spring Boot + Angular + MySQL. The legacy Swing client is still included for reference while the new platform provides JWT auth, role-based access, dashboard metrics, user administration, CSV imports/exports, Docker, and CI/CD.
 
 ## Key features
 
-- Tabbed user interface for navigation
-- Product management with listing and stock tracking
-- Sales registration with automatic validation
-- Sales reporting with total calculation
-- SQL functions callable from the UI
-- Automatic stock updates using triggers
+- JWT authentication with refresh token and role-based permissions (`ADMIN` / `CAJERO`)
+- First-access flow requiring password update for temporary credentials
+- Account area with user stats, connected users, last connection, and admin controls
+- Admin actions: create users, activate/deactivate, delete, and reset temporary passwords
+- Product management by form and bulk CSV import
+- Sales registration, recent activity, and CSV exports for sales/metrics
+- Dashboard metrics with Chart.js (daily vs monthly comparison + top products)
+- Docker Compose full stack (`mysql`, `backend`, `frontend`) and GitHub Actions CI/CD + Deploy
 
 ## Database structure
 
@@ -185,11 +243,17 @@ java -cp ".;lib/mysql-connector-j-9.1.0.jar" TiendaProductosGUI
 
 ### 1. Configure DB credentials
 
-Update `backend/src/main/resources/application.properties`:
+Set your MySQL password in an environment variable before running:
+
+```powershell
+$env:DB_PASSWORD="tu_password_real"
+```
+
+Then keep `backend/src/main/resources/application.properties` like this:
 
 ```properties
 spring.datasource.username=root
-spring.datasource.password=tu_contrasena
+spring.datasource.password=${DB_PASSWORD:tu_contrasena}
 ```
 
 ### 2. Run backend
@@ -203,10 +267,13 @@ Backend URL: `http://localhost:8080`
 Authentication endpoint:
 - `POST /api/auth/login`
 - `POST /api/auth/refresh`
+- `POST /api/auth/first-access`
 
 Products endpoints:
 - `GET /api/products`
 - `GET /api/products/{id}`
+- `POST /api/products`
+- `POST /api/products/import-csv`
 
 Sales endpoints:
 - `GET /api/sales`
@@ -218,6 +285,15 @@ Metrics endpoint:
 - `GET /api/metrics/dashboard`
 - `GET /api/metrics/export`
 
+Users endpoints:
+- `GET /api/users/count`
+- `GET /api/users/status`
+- `POST /api/users` (admin)
+- `PATCH /api/users/{username}/enabled` (admin)
+- `POST /api/users/{username}/reset-password` (admin)
+- `DELETE /api/users/{username}` (admin)
+- `POST /api/users/me/password`
+
 Demo users:
 - `admin` / `admin123` (role `ADMIN`)
 - `cajero` / `cajero123` (role `CAJERO`)
@@ -228,6 +304,9 @@ Authorization rules (finer-grained):
 - `GET /api/products/**`: `ADMIN`, `CAJERO`
 - `POST|PUT|DELETE /api/products/**`: `ADMIN`
 - `GET|POST /api/sales/**`: `ADMIN`, `CAJERO`
+- `GET /api/users/count|status`: `ADMIN`, `CAJERO`
+- `POST /api/users/me/password`: `ADMIN`, `CAJERO`
+- Other `/api/users/**`: `ADMIN`
 
 Sales audit:
 - Sales store `creado_por`, `creado_en`, and `actualizado_en`.

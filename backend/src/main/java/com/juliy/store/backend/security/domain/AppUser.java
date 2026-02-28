@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "usuarios")
 public class AppUser {
@@ -21,6 +23,12 @@ public class AppUser {
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
+
+    @Column(name = "must_change_password", nullable = false)
+    private Boolean mustChangePassword;
+
+    @Column(name = "last_connection_at")
+    private LocalDateTime lastConnectionAt;
 
     public String getUsername() {
         return username;
@@ -52,5 +60,21 @@ public class AppUser {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Boolean getMustChangePassword() {
+        return mustChangePassword;
+    }
+
+    public void setMustChangePassword(Boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
+    }
+
+    public LocalDateTime getLastConnectionAt() {
+        return lastConnectionAt;
+    }
+
+    public void setLastConnectionAt(LocalDateTime lastConnectionAt) {
+        this.lastConnectionAt = lastConnectionAt;
     }
 }

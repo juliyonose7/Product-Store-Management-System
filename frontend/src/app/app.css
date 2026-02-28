@@ -15,6 +15,35 @@ header p {
 	color: #555;
 }
 
+.tabs-nav {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+	margin: 0 0 1rem;
+}
+
+.tabs-nav button {
+	border: 1px solid #d1d5db;
+	background: #ffffff;
+	color: #334155;
+	border-radius: 999px;
+	padding: 0.45rem 0.9rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.tabs-nav button:hover {
+	border-color: #1f6feb;
+	color: #1f6feb;
+}
+
+.tabs-nav button.active {
+	background: #1f6feb;
+	color: #ffffff;
+	border-color: #1f6feb;
+}
+
 .session-info {
 	display: flex;
 	align-items: center;
@@ -69,11 +98,52 @@ table {
 	margin-top: 0.75rem;
 }
 
+.password-row {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 0.5rem;
+	align-items: center;
+}
+
 .metrics-cards {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 0.75rem;
 	margin-top: 0.75rem;
+}
+
+.charts-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.75rem;
+	margin-top: 0.75rem;
+}
+
+.chart-card {
+	border: 1px solid #e7e7e7;
+	border-radius: 8px;
+	padding: 0.75rem;
+	background: #fafafa;
+}
+
+.chart-card h3 {
+	margin: 0;
+	font-size: 0.95rem;
+}
+
+.chart-card-wide {
+	grid-column: 1 / -1;
+}
+
+.chart-box {
+	height: 280px;
+	margin-top: 0.5rem;
+}
+
+.chart-box canvas {
+	display: block;
+	width: 100% !important;
+	height: 100% !important;
 }
 
 .metric-card {
@@ -102,6 +172,35 @@ table {
 	margin-top: 0.75rem;
 }
 
+.product-actions {
+	display: grid;
+	gap: 0.75rem;
+	margin-top: 0.75rem;
+}
+
+.product-form {
+	display: grid;
+	grid-template-columns: 1fr 180px 160px auto;
+	gap: 0.75rem;
+	align-items: end;
+}
+
+.user-form,
+.password-change-form {
+	display: grid;
+	grid-template-columns: 1fr 220px 220px auto;
+	gap: 0.75rem;
+	align-items: end;
+	margin-top: 0.75rem;
+}
+
+.csv-form {
+	display: flex;
+	gap: 0.75rem;
+	align-items: end;
+	flex-wrap: wrap;
+}
+
 label {
 	display: grid;
 	gap: 0.35rem;
@@ -122,6 +221,56 @@ button {
 	color: #fff;
 	border: none;
 	cursor: pointer;
+}
+
+.secondary-button {
+	background: #f3f4f6;
+	color: #111827;
+	border: 1px solid #ccc;
+}
+
+td button {
+	margin-right: 0.5rem;
+}
+
+.danger-button {
+	background: #dc2626;
+}
+
+.modal-backdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(15, 23, 42, 0.35);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem;
+	z-index: 1000;
+}
+
+.modal-card {
+	width: 100%;
+	max-width: 420px;
+	background: #fff;
+	border: 1px solid #e5e7eb;
+	border-radius: 10px;
+	padding: 1rem;
+	display: grid;
+	gap: 0.75rem;
+}
+
+.modal-card h3 {
+	margin: 0;
+}
+
+.modal-card p {
+	margin: 0;
+}
+
+.modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.5rem;
 }
 
 .message {

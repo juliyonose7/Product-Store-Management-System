@@ -22,8 +22,13 @@ public class AppUserDetailsService implements UserDetailsService {
         AppUser user = appUserRepository.findByUsernameAndEnabledTrue(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
+        String encodedPassword = user.getPassword();
+        if (encodedPassword != null && !encodedPassword.startsWith("{")) {
+            encodedPassword = "{noop}" + encodedPassword;
+        }
+
         return User.withUsername(user.getUsername())
-                .password(user.getPassword())
+            .password(encodedPassword)
                 .roles(user.getRole())
                 .build();
     }

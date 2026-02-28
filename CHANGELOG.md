@@ -4,6 +4,23 @@ All notable changes to this project are documented in this file.
 
 The format is based on Keep a Changelog and follows Semantic Versioning.
 
+## [1.1.0] - 2026-02-28
+
+### Added
+- User management module with admin endpoints to create, enable/disable, reset temporary password, and delete users.
+- First-access flow (`POST /api/auth/first-access`) requiring temporary-password replacement.
+- User connectivity tracking with `last_connection_at`, plus summary/status endpoints.
+- Product creation endpoint and CSV bulk-import endpoint for products.
+- Angular account tab with users table, connected users counter, admin actions, and delete confirmation modal.
+- Angular dashboard charts using Chart.js.
+- Docker support (`docker-compose.yml`, backend/frontend Dockerfiles, `.env.example`, Nginx config).
+- GitHub Actions CI workflow (`.github/workflows/ci.yml`) and separate Deploy workflow (`.github/workflows/deploy.yml`).
+
+### Changed
+- Backend datasource and CORS properties are now environment-driven for local and containerized runs.
+- README updated with Docker, CI/CD, deploy pipeline, new endpoints, and current architecture details.
+- Frontend reorganized in tabs (`Dashboard`, `Ventas`, `Productos`, `Cuenta`) for cleaner UX.
+
 ## [1.0.0] - 2026-02-27
 
 ### Added
