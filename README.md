@@ -104,10 +104,6 @@ Deploy workflow:
 - `frontend/`: Angular frontend.
 - Migration approach: move business logic from Swing + direct SQL into backend services.
 
-## Description
-
-Store management system with Spring Boot + Angular + MySQL. The legacy Swing client is still included for reference while the new platform provides JWT auth, role-based access, dashboard metrics, user administration, CSV imports/exports, Docker, and CI/CD.
-
 ## Key features
 
 - JWT authentication with refresh token and role-based permissions (`ADMIN` / `CAJERO`)
@@ -362,6 +358,7 @@ Current frontend features:
 - Stock lookup by product ID
 - Manual stock update
 - Cursor execution to calculate totals
+
 
 
 
